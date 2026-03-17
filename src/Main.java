@@ -19,7 +19,8 @@ public class Main extends JFrame {
         setTitle("Internet Cafe");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setContentPane(panel);
+//        setContentPane(panel);
+        setContentPane(new Cafe());
 
         timer = new Timer(1000, new ActionListener() {
             @Override
