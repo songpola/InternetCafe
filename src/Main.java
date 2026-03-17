@@ -1,15 +1,21 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JFrame {
     private JPanel panel;
-    private JButton btnStartTimer;
+    private JButton btnToggleTimer;
     private JLabel labelTimeDisplay;
+    private JTextField inputTimeHour;
+    private JButton btnStartTimer;
 
     private final Timer timer;
 
-    private int seconds;
+    private Duration timeLeft;
 
     public Main() {
         setTitle("Internet Cafe");
@@ -20,7 +26,13 @@ public class Main extends JFrame {
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                seconds++;
+                timeLeft = timeLeft.minusSeconds(1);
+
+                if (timeLeft.isZero() ||  timeLeft.isNegative()) {
+                    timeLeft = Duration.ZERO;
+                    timer.stop();
+                }
+
                 displayTime();
             }
         });
@@ -28,12 +40,19 @@ public class Main extends JFrame {
         btnStartTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                long hours = Long.parseLong(inputTimeHour.getText());
+                timeLeft = Duration.ofHours(hours);
+                timer.start();
+            }
+        });
+
+        btnToggleTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 if (timer.isRunning()) {
                     timer.stop();
-                    btnStartTimer.setText("Start");
                 } else {
                     timer.start();
-                    btnStartTimer.setText("Stop");
                 }
             }
         });
@@ -42,8 +61,10 @@ public class Main extends JFrame {
     }
 
     private void displayTime() {
-        int minutes = seconds / 60;
-        labelTimeDisplay.setText(String.format("%02d:%02d", minutes, seconds));
+        long hours = timeLeft.toHours();
+        long minutes = timeLeft.toMinutesPart();
+        long seconds = timeLeft.toSecondsPart();
+        labelTimeDisplay.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
     }
 
     public static void main() {

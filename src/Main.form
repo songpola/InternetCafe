@@ -12,15 +12,35 @@
         <properties>
           <horizontalAlignment value="0"/>
           <horizontalTextPosition value="0"/>
-          <text value="00:00"/>
+          <text value="00:00:00"/>
         </properties>
       </component>
-      <component id="2eddb" class="javax.swing.JButton" binding="btnStartTimer">
+      <component id="2eddb" class="javax.swing.JButton" binding="btnToggleTimer">
         <constraints border-constraint="South"/>
         <properties>
-          <text value="Start"/>
+          <text value="Pause/Resume"/>
         </properties>
       </component>
+      <grid id="30d4b" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a2b9b" class="javax.swing.JTextField" binding="inputTimeHour">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <text value="1"/>
+              <toolTipText value="How many hours?"/>
+            </properties>
+          </component>
+          <component id="7a05c" class="javax.swing.JButton" binding="btnStartTimer">
+            <constraints border-constraint="East"/>
+            <properties>
+              <text value="Start"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>
