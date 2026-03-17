@@ -1,21 +1,19 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Duration;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 public class Main extends JFrame {
     private JPanel panel;
     private JButton btnToggleTimer;
-    private JLabel labelTimeDisplay;
+    private JLabel displayTime;
     private JTextField inputTimeHour;
     private JButton btnStartTimer;
-
+    private JLabel displayTotal;
     private final Timer timer;
-
-    private Duration timeLeft;
+    private Duration timeLeft = Duration.ZERO;
 
     public Main() {
         setTitle("Internet Cafe");
@@ -26,14 +24,15 @@ public class Main extends JFrame {
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timeLeft = timeLeft.minusSeconds(1);
-
-                if (timeLeft.isZero() ||  timeLeft.isNegative()) {
+                if (timeLeft.isZero() || timeLeft.isNegative()) {
                     timeLeft = Duration.ZERO;
                     timer.stop();
+                    JOptionPane.showMessageDialog(Main.this, "Time's up!");
                 }
 
-                displayTime();
+                timeLeft = timeLeft.minusSeconds(1);
+
+                updateDisplayTime();
             }
         });
 
@@ -49,10 +48,38 @@ public class Main extends JFrame {
         btnToggleTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (timer.isRunning()) {
-                    timer.stop();
-                } else {
-                    timer.start();
+                if (!timeLeft.isZero() && !timeLeft.isNegative()) {
+                    if (timer.isRunning()) {
+                        timer.stop();
+                    } else {
+                        timer.start();
+                    }
+                }
+            }
+        });
+
+        inputTimeHour.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateDisplayTotal();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateDisplayTotal();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateDisplayTotal();
+            }
+
+            private void updateDisplayTotal() {
+                try {
+                    long hours = Long.parseLong(inputTimeHour.getText());
+                    displayTotal.setText("Total: " + hours * 20 + " Baht");
+                } catch (NumberFormatException e) {
+                    displayTotal.setText("Invalid input. Please enter hours in integer number only.");
                 }
             }
         });
@@ -60,11 +87,11 @@ public class Main extends JFrame {
         setVisible(true);
     }
 
-    private void displayTime() {
+    private void updateDisplayTime() {
         long hours = timeLeft.toHours();
         long minutes = timeLeft.toMinutesPart();
         long seconds = timeLeft.toSecondsPart();
-        labelTimeDisplay.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        displayTime.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
     }
 
     public static void main() {
